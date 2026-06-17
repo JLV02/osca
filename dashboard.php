@@ -70,6 +70,7 @@ $stmt = $pdo->prepare($query);
 $stmt->execute($params);
 $applicants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
