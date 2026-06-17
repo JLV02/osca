@@ -211,7 +211,7 @@ function renderViewModal(r) {
       <div class="detail-grid">
         <div class="detail-item">
           <div class="detail-label">Full Name</div>
-          <div class="detail-value">${na(r.lastnameApplicant)}, ${na(r.firstnameApplicant)} ${na(r.middlenameApplicant)}${suffix ? ' <span class="suffix-badge">'+suffix+'</span>' : ''}</div>
+          <div class="detail-value">${na(r.lastnameApplicant)}, ${na(r.firstnameApplicant)} ${na(r.middlenameApplicant)}${suffix ? ' ' + suffix : ''}</div>
         </div>
         <div class="detail-item"><div class="detail-label">Sex</div><div class="detail-value">${na(r.sex)}</div></div>
         <div class="detail-item">
