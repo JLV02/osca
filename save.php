@@ -32,7 +32,6 @@ if ($action === 'save_step1') {
     $employment = trim($_POST['employment_business'] ?? '');
     $pension    = $_POST['hasPension'] ?? null;
     $travel     = $_POST['travelCapability'] ?? null;
-    // Address (now collected in Step 1)
     $barangay   = trim($_POST['barangay'] ?? '');
     $purok      = trim($_POST['purok'] ?? '');
     $street     = trim($_POST['street'] ?? '');
