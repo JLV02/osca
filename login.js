@@ -1,7 +1,23 @@
+// ── Caps Lock detection ───────────────────────────────────────
+const passwordInput   = document.getElementById('password');
+const capsLockWarning = document.getElementById('capsLockWarning');
+
+function updateCapsLockState(e) {
+  const isCapsOn = e.getModifierState && e.getModifierState('CapsLock');
+  capsLockWarning.classList.toggle('hidden', !isCapsOn);
+  capsLockWarning.classList.toggle('flex', isCapsOn);
+}
+
+passwordInput.addEventListener('keydown', updateCapsLockState);
+passwordInput.addEventListener('keyup', updateCapsLockState);
+passwordInput.addEventListener('blur', () => {
+  capsLockWarning.classList.add('hidden');
+  capsLockWarning.classList.remove('flex');
+});
+
 // ── Toggle password visibility ────────────────────────────────
 const toggleBtn = document.getElementById('togglePw');
 const pwIcon    = document.getElementById('pwIcon');
-
 toggleBtn.addEventListener('click', function () {
   const pw = document.getElementById('password');
   const isPassword = pw.type === 'password';
@@ -79,3 +95,13 @@ function shakeInputs() {
 
 // ── Attach button click ───────────────────────────────────────
 document.getElementById('btnLogin').addEventListener('click', handleLogin);
+
+function openForgotPasswordModal() {
+  document.getElementById('forgotPasswordModal').style.display = 'flex';
+}
+function closeForgotPasswordModal() {
+  document.getElementById('forgotPasswordModal').style.display = 'none';
+}
+document.getElementById('forgotPasswordModal').addEventListener('click', function (e) {
+  if (e.target === this) closeForgotPasswordModal();
+});

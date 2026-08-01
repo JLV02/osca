@@ -1,0 +1,83 @@
+/* ══════════════════════════════════════════
+   OSCA Registry — Self-hosted fonts (offline)
+   Put this file at: osca/assets/css/fonts.css
+   Put the .woff2 files at: osca/assets/fonts/
+   ══════════════════════════════════════════ */
+
+/* ── Inter ── */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/inter-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/inter-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/inter-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/inter-latin-700-normal.woff2') format('woff2');
+}
+
+/* ── Hanken Grotesk ── */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/hanken-grotesk-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/hanken-grotesk-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/hanken-grotesk-latin-700-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('../fonts/hanken-grotesk-latin-800-normal.woff2') format('woff2');
+}
+
+/* ── JetBrains Mono ── */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/jetbrains-mono-latin-500-normal.woff2') format('woff2');
+}
+
+/* ── Material Symbols Outlined (variable font) ── */
+@font-face {
+  font-family: 'Material Symbols Outlined';
+  font-style: normal;
+  font-weight: 100 700;
+  font-display: block;
+  src: url('../fonts/MaterialSymbolsOutlined.woff2') format('woff2');
+}

@@ -1,16 +1,20 @@
 <?php
 session_start();
+require_once 'db.php';
+require_once 'audit_log_helper.php';
+
 header('Content-Type: application/json');
-
 // ─────────────────────────────────────────────────────────────────────────────
-// ADMIN CREDENTIALS
-// Replace the password hash below using:  password_hash('yourPassword', PASSWORD_BCRYPT)
-// Default credentials:  admin / admin123
+// LOGIN — authenticates against the `staff` table (see staff_schema.sql).
+//
+// This replaces the old hardcoded $STAFF array. New encoder accounts created
+// from Settings → Manage Staff appear here automatically since they're just
+// rows in the same table.
+//
+// Roles:
+//   admin   — Full access: view, register, edit, archive, DELETE, manage staff
+//   encoder — Limited access: view, register, edit, archive (no delete, no staff mgmt)
 // ─────────────────────────────────────────────────────────────────────────────
-define('ADMIN_USERNAME', 'admin');
-define('ADMIN_PASSWORD_HASH', '$2y$10$Zn/28NyJ13brKHK22mtWMOoHm4yWOdL0VNoAh6floG/1l.IXAxQVG'); // password: password
-// To set your own password, run: echo password_hash('your_new_password', PASSWORD_BCRYPT);
-
 
 $username = trim($_POST['username'] ?? '');
 $password = $_POST['password'] ?? '';
@@ -20,14 +24,39 @@ if (empty($username) || empty($password)) {
     exit;
 }
 
-if ($username === ADMIN_USERNAME && password_verify($password, ADMIN_PASSWORD_HASH)) {
-    $_SESSION['admin_logged_in'] = true;
-    $_SESSION['admin_username']  = $username;
-    $_SESSION['login_time']      = time();
-    echo json_encode(['success' => true, 'message' => 'Login successful.']);
-} else {
-    // Small delay to deter brute-force
-    sleep(1);
-    echo json_encode(['success' => false, 'message' => 'Invalid username or password.']);
+try {
+    $stmt = $pdo->prepare("SELECT * FROM staff WHERE username COLLATE utf8mb4_bin = ? LIMIT 1");
+    $stmt->execute([$username]);
+    $staff = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($staff && (int)$staff['is_active'] === 1 && password_verify($password, $staff['password_hash'])) {
+        $_SESSION['admin_logged_in'] = true;          // kept for backward-compat guards throughout the app
+        $_SESSION['admin_username']  = $staff['username'];
+        $_SESSION['admin_role']      = $staff['role'];
+        $_SESSION['display_name']    = $staff['display_name'];
+        $_SESSION['staff_id']        = $staff['id'];
+        $_SESSION['login_time']      = time();
+
+        osca_log_login($pdo, true, $username, $staff);
+
+        echo json_encode([
+            'success'      => true,
+            'message'      => 'Login successful.',
+            'role'         => $staff['role'],
+            'display_name' => $staff['display_name'],
+        ]);
+    } elseif ($staff && (int)$staff['is_active'] === 0) {
+        sleep(1);
+        osca_log_login($pdo, false, $username, $staff, 'Attempted login on deactivated account');
+        echo json_encode(['success' => false, 'message' => 'This account has been deactivated. Contact an administrator.']);
+    } else {
+        // Constant-time delay to deter brute-force
+        sleep(1);
+        osca_log_login($pdo, false, $username, null, 'Invalid username or password');
+        echo json_encode(['success' => false, 'message' => 'Invalid username or password.']);
+    }
+} catch (PDOException $e) {
+    error_log('[login] ' . $e->getMessage());
+    echo json_encode(['success' => false, 'message' => 'Login error. Please try again.']);
 }
 ?>
