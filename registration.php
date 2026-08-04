@@ -16,6 +16,36 @@ $isAdmin     = ($currentRole === 'admin');
 <link rel="stylesheet" href="assets/css/tailwind.css">
 <link rel="stylesheet" href="dashboard.css">
 <style>
+  /* ── Profile popup ── */
+.profile-panel {
+  position: absolute; top: calc(100% + 10px); right: 0; width: 240px;
+  background: #fff; border: 1px solid rgba(149,165,166,.20); border-radius: 0.75rem;
+  box-shadow: 0 12px 32px rgba(0,0,0,.14); opacity: 0; visibility: hidden;
+  transform: translateY(-6px); transition: opacity .15s, transform .15s, visibility .15s;
+  z-index: 100; overflow: hidden;
+}
+.profile-panel.open { opacity: 1; visibility: visible; transform: translateY(0); }
+.profile-panel-header {
+  padding: 18px 18px 14px; display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid rgba(149,165,166,.20);
+}
+.profile-panel-avatar {
+  width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+  background: #1d3246; display: flex; align-items: center; justify-content: center;
+  color: #fff; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1rem;
+}
+.profile-panel-name { font-family:'Poppins',sans-serif; font-weight:600; font-size:.92rem; color:#1b1c1d; line-height:1.3; }
+.profile-panel-role { font-size:.72rem; color:#74777d; margin-top:2px; }
+.profile-panel-menu { padding: 8px 0; }
+.profile-panel-item {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 10px 18px; background: none; border: none; cursor: pointer;
+  font-size: .85rem; color: #43474c; text-align: left; transition: background .12s;
+}
+.profile-panel-item:hover { background: #eef1f5; }
+.profile-panel-item .material-symbols-outlined { font-size: 19px; color: #74777d; }
+.profile-panel-item.danger { color: #ba1a1a; }
+.profile-panel-item.danger .material-symbols-outlined { color: #ba1a1a; }
   .material-symbols-outlined {
     font-family: 'Material Symbols Outlined';
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -230,8 +260,27 @@ $isAdmin     = ($currentRole === 'admin');
     <h1 class="font-display font-bold text-2xl text-primary tracking-tight">New Senior Record</h1>
     <div class="flex items-center gap-3">
       <div class="w-px h-8 bg-outline-variant"></div>
-      <div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center">
-        <span class="material-symbols-outlined text-on-primary text-sm" style="font-variation-settings:'FILL' 1">person</span>
+      <div class="relative" id="profileWrap">
+        <button onclick="toggleProfilePanel(event)" class="w-9 h-9 rounded-full flex items-center justify-center cursor-pointer" style="background:#1d3246">
+          <span class="text-white text-sm font-bold font-mono"><?= strtoupper(substr($_SESSION['admin_username'] ?? 'S', 0, 1)) ?></span>
+        </button>
+        <div class="profile-panel" id="profilePanel">
+          <div class="profile-panel-header">
+            <div class="profile-panel-avatar"><?= strtoupper(substr($_SESSION['admin_username'] ?? 'S', 0, 1)) ?></div>
+            <div>
+              <div class="profile-panel-name"><?= htmlspecialchars($currentDisplayName) ?></div>
+              <div class="profile-panel-role"><?= $isAdmin ? 'Administrator' : 'Encoder' ?></div>
+            </div>
+          </div>
+          <div class="profile-panel-menu">
+            <button class="profile-panel-item" onclick="closeProfilePanel();window.location.href='dashboard.php'">
+              <span class="material-symbols-outlined">dashboard</span> Back to Dashboard
+            </button>
+            <button class="profile-panel-item danger" onclick="closeProfilePanel();openLogoutModal()">
+              <span class="material-symbols-outlined">logout</span> Sign Out
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -1838,6 +1887,22 @@ $isAdmin     = ($currentRole === 'admin');
 </div>
 
 <script>
+
+  function toggleProfilePanel(e) {
+  e.stopPropagation();
+  const panel = document.getElementById('profilePanel');
+  if (panel) panel.classList.toggle('open');
+}
+function closeProfilePanel() {
+  const panel = document.getElementById('profilePanel');
+  if (panel) panel.classList.remove('open');
+}
+document.addEventListener('click', (e) => {
+  const wrap  = document.getElementById('profileWrap');
+  const panel = document.getElementById('profilePanel');
+  if (!wrap || !panel) return;
+  if (!wrap.contains(e.target)) panel.classList.remove('open');
+});
 let currentStep = 1;
 
 function openLogoutModal() {
